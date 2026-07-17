@@ -1,0 +1,16 @@
+.theme-button {
+  width: 50px;
+  justify-content: center;
+  padding: 0;
+  border-right: 1px solid var(--line-color);
+  cursor: pointer;
+}
+
+.theme-button:hover {
+  color: var(--accent-color);
+}
+
+.theme-button svg {
+  width: 1.65em;
+  height: 1.65em;
+}

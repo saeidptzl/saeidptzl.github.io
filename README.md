@@ -1,78 +1,85 @@
-# Saeid Asgharian Shirvan — React Portfolio
+# Saeid Asgharian Shirvan: Portfolio
 
-A responsive React portfolio focused on AI Automation, Python, FastAPI, REST APIs and applied machine learning.
+Source of my portfolio site, published at <https://saeidptzl.github.io/>.
 
-## Main features
+It is a single-page React site built with Create React App and deployed to GitHub Pages through GitHub Actions. There is no backend, and the only runtime dependencies are React and React DOM.
 
-- Split-screen home layout
-- Animated role titles
-- Dark and light themes
-- Full-screen navigation
-- About, experience, skills and education sections
-- Project cards with custom visuals
-- Contact page with email preparation form
-- Downloadable CV
-- Automatic GitHub Pages deployment through GitHub Actions
+A Persian version of this guide is in [README_FA.md](README_FA.md).
+
+## Requirements
+
+- Node.js 22, the version the deployment workflow uses
+- npm
 
 ## Run locally
 
 ```bash
-npm install --legacy-peer-deps
+npm ci
 npm start
 ```
 
-Open:
+The site opens at <http://localhost:3000>.
 
-```text
-http://localhost:3000
+## Checks
+
+```bash
+npm test
+CI=true npm run build
 ```
 
-## Create a production build
+`npm test` checks the rendered page: one H1 with the correct name, every PDF link pointing to the current CV, no contact form, and no details from the old CV. With `CI=true`, the build treats lint warnings as errors, as it does on GitHub Actions.
+
+## Preview the production build
 
 ```bash
 npm run build
+python3 -m http.server 8000 --directory build
 ```
+
+Then open <http://localhost:8000>. This simple server has no `404.html` fallback, so the redirects for old URLs only work on GitHub Pages.
 
 ## Deploy
 
-The repository includes:
+`.github/workflows/deploy.yml` runs on every push to `main`. It runs `npm ci` and `npm run build`, then publishes the `build` folder to GitHub Pages.
 
-```text
-.github/workflows/deploy.yml
-```
+The repository needs this setting once: **Settings → Pages → Source → GitHub Actions**.
 
-After the files are pushed to the `main` branch:
+The site is served from the root of `saeidptzl.github.io`, which `homepage` in `package.json` already reflects. If it ever moves to a sub-path, change `homepage` and update the absolute URLs in `public/index.html`, `public/robots.txt` and `public/sitemap.xml`.
 
-1. Open the repository on GitHub.
-2. Go to **Settings → Pages**.
-3. Change **Source** to **GitHub Actions**.
-4. Open the **Actions** tab and wait for the deployment workflow to finish.
-5. Visit `https://saeidptzl.github.io/`.
+## Update the content
 
-## Update content
+| What | Where |
+| --- | --- |
+| All page text, projects, skills and links | `src/content_option.js` |
+| Images | `src/assets/images/` |
+| Page title, description and social preview | `public/index.html`, `public/og-image.png` |
+| Colours, type and layout | `src/styles.css` |
 
-Most personal content is stored in:
+### Replace the CV
 
-```text
-src/content_option.js
-```
+1. Overwrite `public/Saeid_Asgharian_Shirvan_CV.pdf`.
+2. If the filename changes, update `cvFilename` in `src/content_option.js` and the link in the `<noscript>` block of `public/index.html`.
 
-## Update project links
+All CV buttons read the same setting, so nothing else needs changing.
 
-The three project cards currently link to the general repositories page because exact repository URLs were not provided.
+### Project screenshots
 
-Change each `link` value inside:
+The DenaQC and Mondo Tappeti images are screenshots of the live sites, and their captions give the capture date. Update both the image and the caption when a site changes. The WordLoop images come from the public [wordloop-showcase](https://github.com/saeidptzl/wordloop-showcase) repository and use sample data.
 
-```text
-src/content_option.js
-```
+## Old URLs
 
-## Replace profile image
+The previous site had separate pages. GitHub Pages serves `404.html` (a copy of `index.html`, made by the `postbuild` script) for unknown paths, and `src/index.js` then redirects them:
 
-Replace:
+| Old URL | Goes to |
+| --- | --- |
+| `/about` | `/#about` |
+| `/portfolio` | `/#projects` |
+| `/contact` | `/#contact` |
+| `/Saeid_Asgharian_CV.pdf` | the current CV |
+| anything else | the home page |
 
-```text
-src/assets/images/saeid-profile.jpg
-```
+## Licences
 
-with a new square image using the same filename.
+- `LICENSE` is the MIT licence of the template this repository started from. It is kept as required.
+- The fonts in `public/fonts/` (Schibsted Grotesk and IBM Plex Mono) are under the SIL Open Font License. The licence texts are next to them.
+- React's licence notices are added to the build output automatically.
